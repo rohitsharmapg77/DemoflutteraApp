@@ -104,6 +104,8 @@ class _PaginatedListDemoState extends State<PaginatedListDemo> {
       isLoading = true;
     });
 
+
+
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
