@@ -168,6 +168,7 @@ class _PaginatedListDemoState extends State<PaginatedListDemo> {
   }
 }
 
+//API MODEL
 class DemoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -177,6 +178,79 @@ class DemoApp extends StatelessWidget {
       //initialRoute: '/login',
       initialRoute: '/UserScreen',
       routes: AppRoutes.routes,
+    );
+  }
+}
+
+//IMAGEVIEW / TEXTVIEW / EDITTEXT {TEXTFIELD}
+
+class MyHomePage extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Flutter Demo')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // ImageView
+            Image.asset(
+              'assets/images/logo.png',
+              width: 120,
+              height: 120,
+              fit: BoxFit.cover,
+            ),
+
+            SizedBox(height: 20),
+
+            // TextView
+            Text(
+              'स्वागत है!',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            SizedBox(height: 20),
+
+            // EditText
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'अपना नाम लिखें',
+                border: OutlineInputBorder(),
+              ),
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
+            ),
+
+            SizedBox(height: 20),
+
+            //ElevatedButton
+
+            ElevatedButton(
+              onPressed: () {
+                final name = _nameController.text;
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('नमस्ते'),
+                    content: Text('आपका नाम है: $name'),
+                  ),
+                );
+              },
+              child: Text('नाम सबमिट करें'),
+            ),
+
+          ],
+        ),
+      ),
     );
   }
 }
