@@ -1,7 +1,11 @@
+import 'package:demoappone/core/constants/strings.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'core/routes/app_routes.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +19,8 @@ class MyApp extends StatelessWidget {
       title: 'डेमो लिस्ट ऐप',
       theme: ThemeData(primarySwatch: Colors.blue),
       // home: HomeScreen(),
-      home: PaginatedListDemo(),
+      // home: PaginatedListDemo(),
+        home: DemoApp(),
     );
   }
 }
@@ -26,7 +31,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-// होम स्क्रीन जहाँ API कॉल और लिस्टव्यू होगा
+// PaginatedListDemo स्क्रीन जहाँ PaginatedListDemo लिस्टव्यू होगा
 class PaginatedListDemo extends StatefulWidget {
   @override
   _PaginatedListDemoState createState() => _PaginatedListDemoState();
@@ -59,7 +64,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('डेमो लिस्ट व्यू'),
+        title: Text(AppStrings.appName),
+
       ),
       body: dataList.isEmpty
           ? Center(child: CircularProgressIndicator())
@@ -158,6 +164,19 @@ class _PaginatedListDemoState extends State<PaginatedListDemo> {
           }
         },
       ),
+    );
+  }
+}
+
+class DemoApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Clean Flutter App',
+      theme: AppTheme.lightTheme,
+      //initialRoute: '/login',
+      initialRoute: '/UserScreen',
+      routes: AppRoutes.routes,
     );
   }
 }
