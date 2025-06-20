@@ -1,6 +1,7 @@
 // models/user.dart
 
 class User {
+
   final int id;
   final String name;
   final String email;
@@ -14,4 +15,5 @@ class User {
       email: json['email'],
     );
   }
+
 }

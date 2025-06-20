@@ -1,11 +1,17 @@
 import 'package:demoappone/core/constants/strings.dart';
 import 'package:flutter/material.dart';
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'core/routes/app_routes.dart';
+import 'core/apiwithmodels/models/postmodel.dart';
+import 'core/apiwithmodels/models/user.dart';
+import 'core/presentation/screens/login_screen.dart';
+import 'core/presentation/screens/user_screen.dart';
 import 'core/theme/app_theme.dart';
+
+//multiple
+import 'dart:convert';
+
+
 
 void main() {
   runApp(MyApp());
@@ -18,20 +24,34 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'डेमो लिस्ट ऐप',
       theme: ThemeData(primarySwatch: Colors.blue),
+
+
       // home: HomeScreen(),
+
       // home: PaginatedListDemo(),
-        home: DemoApp(),
+
+       // home: DemoApp(),
+
+
+
+      home: MainScreen(), // पहली स्क्रीन
+      routes: {
+        '/LoginScreen': (context) => LoginScreen(),
+        '/UserScreen':  (context) => UserScreen(),
+      },
+
     );
   }
 }
 
-// होम स्क्रीन जहाँ API कॉल और लिस्टव्यू होगा
+
+    // HOME SCREEN API CALL AND LISTVIEW
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-// PaginatedListDemo स्क्रीन जहाँ PaginatedListDemo लिस्टव्यू होगा
+    //PAGINATEDLIST DEMO स्क्रीन जहाँ PaginatedListDemo लिस्टव्यू होगा
 class PaginatedListDemo extends StatefulWidget {
   @override
   _PaginatedListDemoState createState() => _PaginatedListDemoState();
@@ -168,21 +188,27 @@ class _PaginatedListDemoState extends State<PaginatedListDemo> {
   }
 }
 
-//API MODEL
+   //API MODEL
 class DemoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Clean Flutter App',
       theme: AppTheme.lightTheme,
-      //initialRoute: '/login',
-      initialRoute: '/UserScreen',
-      routes: AppRoutes.routes,
+      // initialRoute: '/login',
+     // initialRoute: '/UserScreen',
+     // routes: AppRoutes.routes,
+
+      routes: {
+        '/': (context) => MainScreen(),
+        '/loginscreen': (context) => LoginScreen(),
+        '/userscreen': (context) => UserScreen(),
+      },
     );
   }
 }
 
-//IMAGEVIEW / TEXTVIEW / EDITTEXT {TEXTFIELD}
+  //IMAGEVIEW / TEXTVIEW / EDITTEXT {TEXTFIELD}
 
 class MyHomePage extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -254,3 +280,123 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
+
+// 🏠 Main Screen click
+
+class MainScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Main Screen')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            ElevatedButton(
+              child: Text('Second Screen पर जाएं'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/LoginScreen'); // named route से जाना
+              },
+            ),
+            SizedBox(height: 20),
+
+
+
+            ElevatedButton(
+              child: Text('Third Screen पर जाएं'),
+              onPressed: () {
+                Navigator.pushNamed(context, '/userscreen'); // named route से जाना
+              },
+            ),
+            SizedBox(height: 20),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+//app
+
+
+class _MyAppState extends StatelessWidget {
+  List<User> userList = [];
+  List<PostModel> postList = [];
+  bool isLoading = true;
+  String? error;
+
+  // ✅ Multiple API calls function
+  Future<void> fetchData() async {
+    final userUrl = 'https://jsonplaceholder.typicode.com/users';
+    final postUrl = 'https://jsonplaceholder.typicode.com/posts';
+
+    try {
+      final userResponse = await http.get(Uri.parse(userUrl));
+      final postResponse = await http.get(Uri.parse(postUrl));
+
+      if (userResponse.statusCode == 200 && postResponse.statusCode == 200) {
+        List userJson = jsonDecode(userResponse.body);
+        List postJson = jsonDecode(postResponse.body);
+
+        userList = userJson.map((e) => User.fromJson(e)).toList();
+        postList = postJson.map((e) => PostModel.fromJson(e)).toList();
+      } else {
+        error = "Error in API Response";
+      }
+    } catch (e) {
+      error = e.toString();
+    }
+
+    // setState(() {
+    //   isLoading = false;
+    // });
+  }
+
+  @override
+  void initState() {
+    //super.initState();
+    fetchData(); // API Call जब app शुरू हो
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Multiple API Demo',
+      home: Scaffold(
+        appBar: AppBar(title: Text("Users & Posts")),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : error != null
+            ? Center(child: Text('❌ Error: $error'))
+            : ListView(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("👤 Users", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            ...userList.map((user) => ListTile(
+              leading: CircleAvatar(child: Text(user.id.toString())),
+              title: Text(user.name),
+              subtitle: Text(user.email),
+            )),
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("📝 Posts", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            ...postList.take(5).map((post) => ListTile(
+              title: Text(post.title),
+              subtitle: Text(post.body),
+            )),
+
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+

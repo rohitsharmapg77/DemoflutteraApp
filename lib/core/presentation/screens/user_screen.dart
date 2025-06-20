@@ -6,6 +6,7 @@ import '../../apiwithmodels/viewmodels/user_viewmodel.dart';
 class UserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     final viewModel = Provider.of<UserViewModel>(context);
 
     return Scaffold(
